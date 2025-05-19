@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Doar é viver</title>
+  <style>
+    /* Reset e base */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f7ff 0%, #a8d0ff 100%);
+      color: #333;
+      overflow-x: hidden;
+    }
+    header {
+      background: #4a90e2;
+      padding: 3rem 2rem 4rem;
+      color: white;
+      font-size: 3rem;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 5px;
+      position: relative;
+      text-shadow: 0 0 12px rgba(255,255,255,0.9);
+      user-select: none;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 1rem;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 6px;
+      background: #fff;
+      border-radius: 3px;
+      animation: pulseLine 2s infinite;
+      box-shadow: 0 0 18px 4px rgba(255,255,255,0.8);
+    }
+    @keyframes pulseLine {
+      0%,100% { opacity:1; box-shadow:0 0 18px 4px rgba(255,255,255,0.8); }
+      50%   { opacity:0.5; box-shadow:none; }
+    }
+    nav {
+      margin-top: -1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      background: #4a90e2;
+      box-shadow: inset 0 -3px 8px rgba(255 255 255 / 0.3);
+      user-select: none;
+    }
+    nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 1.2rem 2rem;
+      transition: background-color .35s, transform .35s;
+      border-bottom: 4px solid transparent;
+      border-radius: 6px 6px 0 0;
+    }
+    nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    nav button.active,
+    nav button:hover:not(:disabled) {
+      border-bottom: 4px solid #fff;
+      background-color: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+      box-shadow: 0 0 14px 3px rgba(255 255 255 / 0.8);
+    }
+    main {
+      max-width: 650px;
+      margin: 3rem auto 5rem;
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 0 40px rgba(74,144,226,0.35);
+      min-height: 300px;
+    }
+    section { display: none; }
+    section.active { display: block; }
+
+    /* Login */
+    #loginForm {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+    #loginForm label {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #4a90e2;
+      text-shadow: 0 0 3px rgba(74,144,226,0.6);
+    }
+    #loginForm input {
+      padding: 1.1rem 1.2rem;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      border: 2.5px solid #aaccff;
+      transition: border-color .4s, box-shadow .4s;
+      box-shadow: inset 0 0 15px #cde3ff;
+    }
+    #loginForm input:focus {
+      border-color: #2f6ccc;
+      box-shadow: 0 0 15px 3px rgba(46,105,206,0.8);
+    }
+    #loginForm button {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 1.25rem;
+      font-size: 1.4rem;
+      font-weight: 800;
+      border-radius: 75px;
+      cursor: pointer;
+      transition: background-color .35s, box-shadow .35s, transform .3s;
+      box-shadow: 0 8px 20px rgba(74,144,226,0.55);
+    }
+    #loginForm button:hover {
+      background: #357abd;
+      box-shadow: 0 10px 25px rgba(53,122,189,0.9);
+      transform: scale(1.07);
+    }
+
+    /* Scoreboard */
+    .score-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .score-name {
+      width: 110px;
+      font-weight: 600;
+      color: #2b5a9e;
+    }
+    .score-bar-container {
+      flex: 1;
+      background: #eef6fb;
+      border-radius: 15px;
+      height: 26px;
+      overflow: hidden;
+      box-shadow: inset 2px 2px 5px #c4ddf8, inset -2px -2px 5px #fff;
+      margin: 0 10px;
+    }
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7ed56f, #5abd4a);
+      transition: width .9s ease;
+    }
+    .score-points {
+      width: 50px;
+      text-align: right;
+      font-weight: 700;
+      color: #4a90e2;
+    }
+
+    /* Suas doações */
+    .my-donations {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .donations-label {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #4a90e2;
+      margin-bottom: 0.5rem;
+    }
+    .donations-bar-container {
+      width: 100%;
+      max-width: 600px;
+      height: 24px;
+      background: #eef6fb;
+      border-radius: 12px;
+      margin: 0 auto;
+      overflow: hidden;
+      box-shadow: inset 2px 2px 5px #c4ddf8, inset -2px -2px 5px #ffffff;
+    }
+    .donations-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7ed56f, #5abd4a);
+      transition: width .9s ease;
+    }
+    .donations-points {
+      margin-top: 0.5rem;
+      font-weight: 700;
+      color: #4a90e2;
+    }
+
+    /* Recompensas */
+    .reward-item {
+      display: flex;
+      justify-content: space-between;
+      background: #e4f1ff;
+      padding: 1.4rem 2.2rem;
+      border-radius: 16px;
+      margin-bottom: 1.6rem;
+      align-items: center;
+      box-shadow: 6px 6px 15px #b7cffb, -6px -6px 15px #fff;
+      cursor: default;
+    }
+    .reward-item.clickable { cursor: pointer; }
+    .reward-name { font-weight: 800; }
+    .reward-points { font-weight: 900; }
+    .reward-status {
+      padding: 0.45rem 1rem;
+      border-radius: 35px;
+      font-weight: 700;
+    }
+    .can-redeem { background: #c8f2c5; color: #247020; }
+    .cannot-redeem { background: #ffc8c8; color: #ad2020; }
+
+    @media (max-width:700px){
+      .score-name { width:80px; }
+    }
+  </style>
+</head>
+<body>
+  <header>Doar é viver</header>
+  <nav>
+    <button id="navLogin" class="active" aria-controls="loginSection">Login</button>
+    <button id="navHome" aria-controls="homeSection" disabled>Minha Pontuação</button>
+    <button id="navRewards" aria-controls="rewardsSection" disabled>Recompensas</button>
+  </nav>
+  <main>
+    <!-- Login -->
+    <!-- Tela Login -->
+<section id="loginSection" class="active">
+    <form id="loginForm" autocomplete="off">
+      <label for="usernameInput">Digite seu nome:</label>
+      <input type="text" id="usernameInput" placeholder="Seu nome" required />
+  
+      <label for="passwordInput">Digite sua senha:</label>
+      <input type="password" id="passwordInput" placeholder="Senha" required minlength="4" />
+  
+      <button type="submit">Entrar</button>
+    </form>
+  </section>
+  
+  <script>
+    (() => {
+      const loginForm  = document.getElementById('loginForm');
+      const usernameIn = document.getElementById('usernameInput');
+      const passwordIn = document.getElementById('passwordInput');
+  
+      // Aqui você pode definir uma senha fixa ou integrar com backend
+      const MOCK_PASSWORD = '1234';
+  
+      loginForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const name = usernameIn.value.trim();
+        const pass = passwordIn.value;
+        if (!name) {
+          return alert('Por favor, informe seu nome.');
+        }
+        if (pass !== MOCK_PASSWORD) {
+          return alert('Seu login deu certo.');
+        }
+        // Se chegou aqui, login bem‑sucedido:
+        enableTabs();             // habilita as abas
+        switchTo(homeSec);        // mostra “Minha Pontuação”
+        showScoreboard();         // preenche o ranking
+      });
+    })();
+  </script>
+  
+
+    <!-- Minha Pontuação -->
+    <section id="homeSection">
+      <h2>Ranking de Pontuação</h2>
+      <div id="scoreboard"></div>
+
+      <!-- Suas doações (fixo 55/250) -->
+      <div class="my-donations">
+        <div class="donations-label">Suas doações</div>
+        <div class="donations-bar-container">
+          <div class="donations-bar-fill" style="width:22%;"></div>
+        </div>
+        <div class="donations-points">55 de 250 pts</div>
+      </div>
+    </section>
+
+    <!-- Recompensas -->
+    <section id="rewardsSection">
+      <h2>Recompensas disponíveis</h2>
+      <ul id="rewardList"></ul>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const navLogin    = document.getElementById('navLogin');
+      const navHome     = document.getElementById('navHome');
+      const navRewards  = document.getElementById('navRewards');
+      const loginSec    = document.getElementById('loginSection');
+      const homeSec     = document.getElementById('homeSection');
+      const rewardsSec  = document.getElementById('rewardsSection');
+      const loginForm   = document.getElementById('loginForm');
+      const usernameIn  = document.getElementById('usernameInput');
+      const scoreboard  = document.getElementById('scoreboard');
+      const rewardList  = document.getElementById('rewardList');
+
+      const fakeUsers = [
+        { name: 'Ana', points: 235 },
+        { name: 'Carlos', points: 150 },
+        { name: 'Beatriz', points: 90 },
+        { name: 'Eduardo', points: 60 },
+        { name: 'Fernanda', points: 20 }
+      ];
+      const rewards = [
+        { name: 'Cupom 10% de desconto', cost: 50 },
+        { name: 'Camiseta personalizada', cost: 120 },
+        { name: 'Vale-presente R$50', cost: 200 },
+        { name: 'Fone de ouvido Bluetooth', cost: 250 },
+      ];
+      const userPts = 55;
+      const maxPts  = 250;
+
+      function switchTo(sec) {
+        [loginSec, homeSec, rewardsSec].forEach(s => {
+          s.classList.toggle('active', s===sec);
+          s.style.display = s===sec ? 'block' : 'none';
+        });
+        [navLogin, navHome, navRewards].forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('aria-controls')===sec.id);
+        });
+      }
+
+      function enableTabs() {
+        navHome.disabled    = false;
+        navRewards.disabled = false;
+      }
+
+      function showScoreboard() {
+        scoreboard.innerHTML = '';
+        fakeUsers.forEach(u => {
+          const pct = Math.min((u.points/maxPts)*100,100);
+          scoreboard.innerHTML += `
+            <div class="score-row">
+              <div class="score-name">${u.name}</div>
+              <div class="score-bar-container">
+                <div class="score-bar-fill" style="width:${pct}%"></div>
+              </div>
+              <div class="score-points">${u.points}</div>
+            </div>`;
+        });
+      }
+
+      function showRewards() {
+        rewardList.innerHTML = '';
+        rewards.forEach((r,i) => {
+          const can = userPts >= r.cost;
+          const cls = can ? 'can-redeem clickable' : 'cannot-redeem';
+          rewardList.innerHTML += `
+            <li class="reward-item ${can?'clickable':''}" data-index="${i}">
+              <span class="reward-name">${r.name}</span>
+              <span class="reward-points">${r.cost} pts</span>
+              <span class="reward-status ${can? 'can-redeem' : 'cannot-redeem'}">
+                ${can? 'Pode resgatar' : 'Pontos insuficientes'}
+              </span>
+            </li>`;
+        });
+      }
+
+      // eventos
+      loginForm.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!usernameIn.value.trim()) return alert('Informe seu nome');
+        enableTabs();
+        switchTo(homeSec);
+        showScoreboard();
+      });
+
+      navLogin.onclick   = () => switchTo(loginSec);
+      navHome.onclick    = () => { if(!navHome.disabled){switchTo(homeSec); showScoreboard();} };
+      navRewards.onclick = () => { if(!navRewards.disabled){switchTo(rewardsSec); showRewards();} };
+
+      rewardList.addEventListener('click', e => {
+        const item = e.target.closest('.reward-item.clickable');
+        if (!item) return;
+        const idx = item.dataset.index;
+        alert(`Você resgatou: ${rewards[idx].name}!`);
+      });
+
+      // inicialização
+      switchTo(loginSec);
+    })();
+  </script>
+</body>
+</html>
